@@ -6,9 +6,9 @@ First off, thanks for taking the time to contribute to this project 🥳
 
 ### Reporting Bugs
 
-1. **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/The-CodingSloth/haha-funny-leetcode-extension/issues).
+1. **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/gregoire-badiche/phonograph/issues).
 
-2. If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/The-CodingSloth/haha-funny-leetcode-extension/issues/new).
+2. If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/gregoire-badiche/phonograph/issues/new).
 
 ### Suggesting Enhancements
 
