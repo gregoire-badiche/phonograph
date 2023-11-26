@@ -3,3 +3,5 @@ test/
 output.txt
 phonograph
 launch.json
+.vscode/
+sample.txt

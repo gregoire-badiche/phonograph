@@ -4,7 +4,7 @@
   "description": "a console-based music player",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node src/app.js 2> output.txt",
     "start": "node src/app.js"
   },
   "repository": {
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/gregoire-badiche/phonograph#readme",
   "dependencies": {
     "node-lame": "^1.3.2",
+    "sharp": "^0.32.6",
     "speaker": "^0.5.4"
   }
 }

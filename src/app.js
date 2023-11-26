@@ -3,7 +3,9 @@
 const connexion = require('./api/api');
 const player = require('./player/player');
 const Window  = require('./window/window');
-const Input = require('./window/input')
+const Input = require('./window/input');
+const Selector = require('./window/selector');
+const Loader = require('./window/loader');
 
 const window = new Window();
 
@@ -11,17 +13,26 @@ const window = new Window();
  * @param {Window} window
  */
 const main = (window) => {
-    window.clear();
-    var input = new Input(window);
-    input.placeholder = 'search for track';
-    input.pretext = '  🔎  ';
-    input.onselect = v => {
-        window.cursor.x = 1;
-        window.cursor.y = 2;
-        window.write(v);
-    }
-    input.draw();
-    input.focus();
+    // window.clear();
+    // var selector = new Selector(window);
+    // selector.focus();
+    // var input = new Input(window);
+    // input.placeholder = 'search for track';
+    // input.pretext = '  🔎  ';
+    // input.onselect = v => {
+    //     window.cursor.x = 1;
+    //     window.cursor.y = 2;
+    //     window.resetcolor();
+    //     window.write(v);
+    //     input.unfocus();
+    //     setTimeout(() => {
+    //         input.focus();
+    //     }, 1000);
+    // }
+    // input.focus();
+    // input.draw();
+    const loader = new Loader(window);
+    loader.visible = true;
 }
 
 const connecting = (window) => {
@@ -52,6 +63,4 @@ const connecting = (window) => {
         });
 }
 
-setTimeout(() => {
-    main(window);
-}, 200)
+main(window);

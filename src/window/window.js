@@ -42,15 +42,18 @@ class Cursor {
         let code = this._visible ? 'h' : 'l';
         this._write(`?25${code}`);
     }
+
+    setbar() {
+        this._write('5 q');
+    }
 }
 class Window {
     constructor() {
         this.width = process.stdout.columns;
         this.height = process.stdout.rows;
+        this.escapecode = '\u001b[';
 
         this._init();
-
-        this.escapecode = '\u001b[';
 
         this.childs = [];
         this.focusedElement;
@@ -58,9 +61,13 @@ class Window {
         this.interval;
 
         this.cursor = new Cursor();
+        this.cursor.visible = false;
+        this.focusedElement = undefined;
     }
 
     _init() {
+        this.savestate();
+
         process.on('SIGWINCH', () => {
             console.log("resized!");
             if (this.width !== process.stdout.columns || this.height !== process.stdout.rows) {
@@ -118,14 +125,22 @@ class Window {
 
     clear() {
         process.stdout.write(`${this.escapecode}2J${this.escapecode}3J`);
+    }
 
+    savestate() {
+        process.stdout.write(`${this.escapecode}?1049h`);
+    }
+
+    restorestate() {
+        process.stdout.write(`${this.escapecode}?1049l`);
     }
 
     _end(code) {
-        this.resetcolor();
-        this.clear();
-        this.cursor.visible = true;
-        this.cursor.setpos(1, 1);
+        // this.resetcolor();
+        // this.clear();
+        // this.cursor.visible = true;
+        // this.cursor.setpos(1, 1);
+        this.restorestate();
         this.write(`Program exited with code ${code}\n`);
     }
 

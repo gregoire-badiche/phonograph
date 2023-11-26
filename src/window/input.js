@@ -31,16 +31,24 @@ class Input {
     }
 
     draw() {
+        if(this.isfocused) {
+            this.window.setbg(this.bgcolor);
+            this.window.setfg(this.fgcolor);
+        } else {
+            this.window.resetcolor();
+        }
         this.window.cursor.setpos(this.x, this.y);
-        this.window.setbg(this.bgcolor);
-        this.window.setfg(this.fgcolor);
         this.window.write(this.pretext);
         this.window.write(' '.repeat(this.width - this.pretext.length));
         this.window.cursor.setpos(this.x + this.pretext.length, this.y);
         if (this.value == '') {
             this.window.setfg(this.sfgcolor);
             this.window.write(this.placeholder);
-            this.window.setfg(this.fgcolor);
+            if(this.isfocused) {
+                this.window.setfg(this.fgcolor);
+            } else {
+                this.window.resetcolor();
+            }
             this.window.cursor.setpos(this.x + this.pretext.length, this.y);
         } else {
             this.window.write(this.value);
@@ -93,7 +101,17 @@ class Input {
     }
 
     focus() {
+        this.window.focusedElement = this;
+        this.isfocused = true;
         this.window.onkeydown = e => { this.onkeydown(e) };
+        this.window.cursor.visible = true;
+        this.draw();
+    }
+
+    unfocus() {
+        this.isfocused = false;
+        this.window.cursor.visible = false;
+        this.draw();
     }
 }
 
