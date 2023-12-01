@@ -6,8 +6,10 @@ const Window  = require('./window/window');
 const Input = require('./window/input');
 const Selector = require('./window/selector');
 const Loader = require('./window/loader');
+const imgtoascii = require('./imgtoascii/imgtoascii')
 
-const window = new Window();
+//const window = new Window();
+const window = 0;
 
 /**
  * @param {Window} window
@@ -31,8 +33,18 @@ const main = (window) => {
     // }
     // input.focus();
     // input.draw();
-    const loader = new Loader(window);
-    loader.visible = true;
+    // const loader = new Loader(window);
+    // loader.visible = true;
+    imgtoascii('/home/gregoire/Pictures/Webcam/2023-11-30-131206.jpg', 40).then(arr => {
+        let res = ""
+        for(let i = 0; i < arr.length; i++) {
+            res += arr[i]
+            if(i != arr.length - 1) {
+                res += "\n"
+            }
+        }
+        console.log(res)
+    })
 }
 
 const connecting = (window) => {

@@ -1,6 +1,6 @@
 const sharp = require('sharp');
 
-const imgtoascii = async (img, dimensions = 28) => {
+const imgtoascii = async (img, dimensions = 10) => {
     const data = await sharp(img)
         .resize(dimensions, dimensions, 'cover')
         .raw()
@@ -18,7 +18,7 @@ const imgtoascii = async (img, dimensions = 28) => {
             let b = Math.floor(data[i * dimensions * 3 + j * 3 + 2] * 6 / 256);
             if (b >= 6) b = 5;
 
-            let number = 16 + b + g * 6 + b * 36;
+            let number = 16 + b + g * 6 + r * 36;
 
             matrix[i].push(number);
         }
@@ -31,7 +31,7 @@ const imgtoascii = async (img, dimensions = 28) => {
             let c2 = matrix[i_1 + 1][j_1];
             str += `\u001b[38;5;${c1}m\u001b[48;5;${c2}m▀`;
         }
-        str += '\u001b[38m\u001b[48m';
+        str += '\u001b[39m\u001b[49m';
         result.push(str);
     }
     return result;
