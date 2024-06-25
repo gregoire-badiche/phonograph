@@ -1,4 +1,5 @@
 const Window = require('./window');
+const Text = require('./text');
 
 class Input extends Window.Element {
     /**
@@ -14,6 +15,8 @@ class Input extends Window.Element {
         // Secondary foreground color
         this.sfgcolor = 8;
 
+        this.text = new Text(this.window, this.value, { width: this.width - this.pretext.length });
+
         this.onselect = onselect;
     }
 
@@ -23,8 +26,10 @@ class Input extends Window.Element {
 
     set value(v) {
         this._value = v;
-        this.window.cursor.setpos(this.x, this.y);
-        this.window.write(v);
+        this.text.text = this._value;
+        this.text.scroll = this.text.maxscroll;
+        this.window.log(this.text.maxscroll);
+        this.draw();
     }
 
     draw() {
@@ -40,7 +45,7 @@ class Input extends Window.Element {
         this.window.cursor.setpos(this.x + this.pretext.length, this.y);
         if (this.value == '') {
             this.window.setfg(this.sfgcolor);
-            this.window.write(this.placeholder);
+            this.window.write(this.placeholder.slice(0, this.width - this.pretext.length));
             if(this.isfocused) {
                 this.window.setfg(this.fgcolor);
             } else {
@@ -48,7 +53,7 @@ class Input extends Window.Element {
             }
             this.window.cursor.setpos(this.x + this.pretext.length, this.y);
         } else {
-            this.window.write(this.value);
+            this.window.write(this.text.result);
         }
     }
 
@@ -58,38 +63,11 @@ class Input extends Window.Element {
         }
         var kc = k.charCodeAt(0);
         if (kc == '127') {
-            if (this._value.length > 0 && this._value.length < this.width - this.pretext.length) {
-                this.window.cursor.x -= 1;
-                this.window.write(' ');
-                this.window.cursor.x -= 1;
-                this._value = this._value.substring(0, this._value.length - 1);
-            }
-            if (this._value.length > 0 && this._value.length >= this.width - this.pretext.length) {
-                this._value = this._value.substring(0, this._value.length - 1);
-                this.window.cursor.setpos(this.x + this.pretext.length, this.y);
-                this.window.write(this._value.substring(this._value.length - this.width + this.pretext.length + 1));
-            }
-            if (this._value.length == 0) {
-                this.window.setfg(this.sfgcolor);
-                this.window.write(this.placeholder);
-                this.window.setfg(this.fgcolor);
-                this.window.cursor.setpos(this.x + this.pretext.length, this.y);
-            }
+            this.value = this.value.slice(0, this.value.length - 1)
         }
         else {
             if (kc > 31) {
-                if (this.x + this.pretext.length + this._value.length < this.width) {
-                    if (this._value.length == 0) {
-                        this.window.write(" ".repeat(this.placeholder.length));
-                        this.window.cursor.setpos(this.x + this.pretext.length, this.y);
-                    }
-                    this.window.write(k);
-                    this._value += k;
-                } else {
-                    this._value += k;
-                    this.window.cursor.setpos(this.x + this.pretext.length, this.y);
-                    this.window.write(this._value.substring(this._value.length - this.width + this.pretext.length + 1));
-                }
+                this.value += k;
             }
             if (kc == 13) {
                 this.onselect(this._value);
@@ -98,16 +76,16 @@ class Input extends Window.Element {
     }
 
     focus() {
-        this.window.focusedElement = this;
         this.isfocused = true;
         this.window.onkeydown = e => { this.onkeydown(e) };
-        this.window.cursor.visible = true;
+        // this.window.cursor.visible = true;
         this.draw();
     }
 
     unfocus() {
         this.isfocused = false;
-        this.window.cursor.visible = false;
+        this.window.onkeydown = _ => { };
+        // this.window.cursor.visible = false;
         this.draw();
     }
 }

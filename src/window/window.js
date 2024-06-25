@@ -208,13 +208,10 @@ class Window {
 
     restorestate() {
         process.stdout.write(`${this.escapecode}?1049l`);
+        this.cursor.visible = true;
     }
 
     _end(code) {
-        // this.resetcolor();
-        // this.clear();
-        // this.cursor.visible = true;
-        // this.cursor.setpos(1, 1);
         this.restorestate();
         this.write(`Program exited with code ${code}\n`);
     }
