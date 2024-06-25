@@ -1,3 +1,61 @@
+'use strict';
+
+class Element {
+    constructor(window, { width = 1, height = 1, x = 1, y = 1 } = {}) {
+        this._width = width;
+        this._height = height;
+        this._x = x;
+        this._y = y;
+        this.window = window;
+    }
+
+    get x() {
+        return this._x;
+    }
+
+    set x(x) {
+        this._x = x;
+        this.move();
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    set y(y) {
+        this._x = y;
+        this.move();
+    }
+
+    move() { }
+
+    get width() {
+        return this._width;
+    }
+
+    set width(w) {
+        this._width = w;
+        this.resize();
+    }
+
+    get height() {
+        return this._height;
+    }
+
+    set height(h) {
+        this._height = h;
+        this.resize();
+    }
+
+    resize() { }
+
+    draw() { }
+
+    focus() { }
+
+    unfocus() {}
+}
+
 class Cursor {
     _visible = true;
     _x = 1;
@@ -12,26 +70,26 @@ class Cursor {
         return this._x;
     }
     set x(pos) {
-        if(!(pos <= process.stdout.columns && pos > 0)) return;
+        if(!(pos < process.stdout.columns && pos >= 0)) return;
         this._x = pos;
-        this._write(`${this._y};${this._x}H`);
+        this._write(`${this._y + 1};${this._x + 1}H`);
     }
 
     get y() {
         return this._y;
     }
     set y(pos) {
-        if(!(pos <= process.stdout.rows && pos > 0)) return;
+        if(!(pos < process.stdout.rows && pos >= 0)) return;
         this._y = pos;
-        this._write(`${this._y};${this._x}H`);
+        this._write(`${this._y + 1};${this._x + 1}H`);
     }
 
     setpos(x, y) {
-        if(!(x <= process.stdout.columns && x > 0)) return;
-        if(!(y <= process.stdout.rows && y > 0)) return;
+        if(!(x < process.stdout.columns && x >= 0)) return;
+        if(!(y < process.stdout.rows && y >= 0)) return;
         this._y = y;
         this._x = x;
-        this._write(`${this._y};${this._x}H`);
+        this._write(`${this._y + 1};${this._x + 1}H`);
     }
 
     get visible() {
@@ -48,6 +106,8 @@ class Cursor {
     }
 }
 class Window {
+    static Element = Element;
+
     constructor() {
         this.width = process.stdout.columns;
         this.height = process.stdout.rows;
@@ -56,13 +116,14 @@ class Window {
         this._init();
 
         this.childs = [];
-        this.focusedElement;
 
         this.interval;
 
         this.cursor = new Cursor();
         this.cursor.visible = false;
-        this.focusedElement = undefined;
+
+        this.dummyelement = new Element(this);
+        this.focusedElement = this.dummyelement;
     }
 
     _init() {
@@ -103,9 +164,15 @@ class Window {
     onresize = () => { };
     onquit = () => { };
 
+    focus(e) {
+        this.focusedElement.unfocus();
+        this.focusedElement = e;
+        e.focus();
+    }
+
     write(t) {
         t = t.toString();
-        this.cursor._y += Math.floor((this.cursor._x + t.length) / this.width);
+        this.cursor._y += Math.floor((this.cursor.x + t.length) / (this.width + 2));
         this.cursor._x += t.length;
         this.cursor._x %= this.width;
         process.stdout.write(t);
@@ -120,6 +187,14 @@ class Window {
     }
 
     resetcolor() {
+        process.stdout.write(`${this.escapecode}0m`);
+    }
+
+    setbold() {
+        process.stdout.write(`${this.escapecode}1m`);
+    }
+
+    resetdecoration() {
         process.stdout.write(`${this.escapecode}0m`);
     }
 
@@ -147,6 +222,10 @@ class Window {
     terminate() {
         process.exit(0);
     };
+
+    log(m, end='\n') {
+        process.stderr.write(m + end);
+    }
 }
 
 module.exports = Window;

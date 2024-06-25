@@ -1,18 +1,16 @@
 const Window = require('./window');
 
-class Selector {
+class Loader extends Window.Element {
     /**
      * @param {Window} window 
      */
-    constructor(window) {
-        this.x = 1;
-        this.y = 1;
+    constructor(window, { width, height, x, y }) {
+        super(window, { width, height, x, y });
         this._visible = false;
         this.state = 0;
         this.interval = undefined;
         this.tickspeed = 100;
         this.frames = ['⠋', '⠙', '⠸', '⠴', '⠦', '⠇'];
-        this.window = window;
     }
 
     get visible() {
@@ -50,4 +48,4 @@ class Selector {
     }
 }
 
-module.exports = Selector;
+module.exports = Loader;

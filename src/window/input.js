@@ -1,23 +1,20 @@
 const Window = require('./window');
 
-class Input {
+class Input extends Window.Element {
     /**
      * @param {Window} window 
      */
-    constructor(window) {
-        this.window = window;
-        this._value = '';
-        this.x = 1;
-        this.y = 1;
-        this.width = this.window.width;
-        this.placeholder = '';
-        this.pretext = '';
+    constructor(window, { width, height, x, y, value = '', placeholder = '', pretext = '', onselect = _ => {} }) {
+        super(window, { width, height: 1, x, y })
+        this._value = value;
+        this.placeholder = placeholder;
+        this.pretext = pretext;
         this.bgcolor = 15;
         this.fgcolor = 0;
         // Secondary foreground color
         this.sfgcolor = 8;
 
-        this.onselect = _ => { };
+        this.onselect = onselect;
     }
 
     get value() {
