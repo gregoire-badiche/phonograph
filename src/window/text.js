@@ -6,12 +6,13 @@ class Text {
     /**
      * @param {Window} window 
      */
-    constructor(window, text, { width = 0, scroll = 0 }) {
+    constructor(window, text, { width, scroll = 0 } = {}) {
         this.window = window;
         this._text = text;
-        this.result = '';
+        this.result = ' '.repeat(this.width);
         this.height = 1;
         this._scroll = scroll;
+        this.maxscroll = 0;
         this.width = width ? width : this.window.width;
     }
 
@@ -22,6 +23,8 @@ class Text {
     set scroll(s) {
         if(s < this.maxscroll) {
             this._scroll = s;
+        } else if(s < 0) {
+            this._scroll = 0;
         } else {
             this._scroll = this.maxscroll;
         }
@@ -44,12 +47,13 @@ class Text {
 
     set text(t) {
         this._text = t;
+        this.maxscroll = this.text.length > this.width ? this.text.length - this.width : 0;
         this.compute();
     }
 
     compute() {
         if(this.text.length > this.width) {
-            this.result = this._text.slice(this._scroll, this.width + this.scroll);
+            this.result = this.text.slice(this.scroll, this.width + this.scroll);
         } else {
             this.result = this.text +  ' '.repeat(this.width - this.text.length);
         }
